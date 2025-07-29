@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 class ModelLoader:
     def __init__(self, memory_controller):
         load_dotenv()
+
         self.model = ChatOpenAI(
             api_key=os.getenv("MODEL_API_KEY"),
             base_url=os.getenv("BASE_URL"),

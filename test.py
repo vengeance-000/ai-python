@@ -1,6 +1,6 @@
 from lib.controllers.memory_controller import MemoryController
 from lib.utils.model_loader import ModelLoader
-from lib.models.config import reasoning
+# from lib.models.config import reasoning
 import time
 
 def test_conversational_memory():
