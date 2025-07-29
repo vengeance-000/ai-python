@@ -1,28 +1,25 @@
-from openai import OpenAI
-import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from route import router
 
-
-client = OpenAI(
-    api_key=os.getenv('SEA_LION_API_KEY'),
-    base_url="https://api.sea-lion.ai/v1" 
+app = FastAPI(
+    title="vengeance-ai-python",
+    description="A modular backend for AI Agents written in python",
+    version="1.0.0"
 )
 
-completion = client.chat.completions.create(
-    model="aisingapore/Llama-SEA-LION-v3.5-8B-R",
-    messages=[
-        {
-            "role": "user",
-            "content": "Tell me a Singlish joke!"
-        }
-    ],
-    extra_body={
-        "chat_template_kwargs": {
-            "thinking_mode": "off"
-        }, 
-        "cache": {
-            "no-cache": True
-        }
-    },
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-print(completion.choices[0].message.content)
+
+app.include_router(router, prefix="/api")
+
+@app.get("/")
+def read_root():
+    return {"message": "LLM Backend Utilities is running."}
