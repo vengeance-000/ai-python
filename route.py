@@ -146,3 +146,35 @@ async def lesson_plan(request: Request):
 async def course_suggestion(request: Request):
     body = await request.json()
     return course_suggestor_agent.suggest(body)
+
+# agentic capabilities
+
+@router.post("/agent/research")
+async def research_agent_endpoint(request: Request):
+    body = await request.json()
+    agent = agent_factory.get_agent("research")
+    return await agent.invoke(body, body.get("thread_id", "default"))
+
+@router.post("/workflow/execute")
+async def execute_workflow(request: Request):
+    body = await request.json()
+    workflow_name = body.get("workflow")
+    input_data = body.get("input", {})
+    thread_id = body.get("thread_id", "default")
+    
+    result = await orchestrator.execute_workflow(workflow_name, input_data, thread_id)
+    return result
+
+@router.post("/agent/create")
+async def create_custom_agent(request: Request):
+    body = await request.json()
+    agent_config = body.get("config")
+    agent = agent_factory.create_agent_from_config(agent_config)
+    return {"status": "created", "agent_id": agent.name}
+
+@router.get("/tools/available")
+async def get_available_tools():
+    return {
+        "categories": tool_registry.tool_categories,
+        "tools": {name: tool.description for name, tool in tool_registry.tools.items()}
+    }
